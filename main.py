@@ -36,9 +36,7 @@ string = """Anna
     Charlotte Anna 1 0
     Bob Femke 1 0"""
 
-
-
-info = []
+player_input = []
 
 
 def splitting_input(some_string):
@@ -51,24 +49,35 @@ def splitting_input(some_string):
         new_list = a_str[n].split('\n')
         list.append(new_list)
         n += 1
+
     names = [score.split() for score in list[0]]
     first_round = [score.split() for score in list[1]]
     second_round = [score.split() for score in list[2]]
     final_round = [score.split() for score in list[3]]
-    info = [names, first_round, second_round, final_round]
+    global player_input
+    player_input = [names, first_round, second_round, final_round]
 
-    return print(info)
+    return player_input
 
 
 splitting_input(string)
 
+new_player_input0 = player_input[0][0] + player_input[0][1] + player_input[0][2] + player_input[0][3] + player_input[0][
+    4] + \
+                    player_input[0][5]
+
+a_dict = {}
 
 
 def creating_dictionary(some_list):
     """creating a dictionary of player names from a parsed list"""
-    a_dict = dict.fromkeys(some_list, {'name', 'points', 'resistance_points', 'Sonnenborn_berger', 'black'})
-    return a_dict
+    global a_dict
+    i = 0
 
+    for item in some_list:
+        a_dict = dict.fromkeys(some_list, {'name', 'points', 'resistance_points', 'Sonnenborn_berger', 'black'})
+        i += 1
+    return a_dict
 
 
 # connecting the dictionary to a class
@@ -78,11 +87,16 @@ def creating_dictionary(some_list):
 #  setattr(self, key, value)
 
 
-o = player_result('Anna', 1.0, 5.0, 0.50, 2)
+# o = player_result('Anna', 1.0, 5.0, 0.50, 2)
 
 
 def eval_input(list):
-    creating_dictionary(list[0])
-    list[1]
+    n = 0
+    for players in list:
+        creating_dictionary(new_player_input0)
+        n += 1
+    return a_dict
 
 
+print(eval_input(player_input[0]))
+creating_dictionary(new_player_input0)
