@@ -36,22 +36,36 @@ string = """Anna
     Charlotte Anna 1 0
     Bob Femke 1 0"""
 
-new_list = []
-list = []
+
+
+info = []
 
 
 def splitting_input(some_string):
     """splitting the input string on every empty tab"""
     n = 0
+    list = []
+    new_list = []
     a_str = some_string.split('\n\n')
     for _ in a_str:
-        new_list = a_str[n].split()
+        new_list = a_str[n].split('\n')
         list.append(new_list)
         n += 1
-    return list
+    names = [score.split() for score in list[0]]
+    first_round = [score.split() for score in list[1]]
+    second_round = [score.split() for score in list[2]]
+    final_round = [score.split() for score in list[3]]
+    info = [names, first_round, second_round, final_round]
+
+    return print(info)
 
 
 splitting_input(string)
+#new_list=[]
+#while i<len(data_list):
+#  new_list.append(data_list[i:i+3])
+#  i+=3
+#splitting_input(string)
 
 
 def creating_dictionary(some_list):
@@ -72,6 +86,6 @@ o = player_result('Anna', 1.0, 5.0, 0.50, 2)
 
 def eval_input(list):
     creating_dictionary(list[0])
+    list[1]
 
 
-eval_input(list)
