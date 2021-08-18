@@ -54,17 +54,17 @@ def splitting_input(some_string):
 splitting_input(string)
 
 
-
 def creating_dictionary(some_list):
     """creating a dictionary of player names from a parsed list"""
     a_dict = dict.fromkeys(some_list, {'name', 'points', 'resistance_points', 'Sonnenborn_berger', 'black'})
     return a_dict
 
+
 # connecting the dictionary to a class
-#class Players:
-    #def __init__(self, a_dict):
-        #for key, value in a_dict.items():
-            #setattr(self, key, value)
+# class Players:
+# def __init__(self, a_dict):
+#  for key, value in a_dict.items():
+#  setattr(self, key, value)
 
 
 o = player_result('Anna', 1.0, 5.0, 0.50, 2)
@@ -72,8 +72,6 @@ o = player_result('Anna', 1.0, 5.0, 0.50, 2)
 
 def eval_input(list):
     creating_dictionary(list[0])
-
-
 
 
 eval_input(list)
