@@ -70,6 +70,7 @@ def creating_dictionary(some_list):
     return a_dict
 
 
+
 # connecting the dictionary to a class
 # class Players:
 # def __init__(self, a_dict):
