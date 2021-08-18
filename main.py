@@ -61,11 +61,7 @@ def splitting_input(some_string):
 
 
 splitting_input(string)
-#new_list=[]
-#while i<len(data_list):
-#  new_list.append(data_list[i:i+3])
-#  i+=3
-#splitting_input(string)
+
 
 
 def creating_dictionary(some_list):
