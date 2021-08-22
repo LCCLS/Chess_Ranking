@@ -107,7 +107,19 @@ def resistance_points():
 
 
 def sonnenborn_points():
-    pass
+    for player in players:
+        for opponents in player_dict[player].won_against:
+            player_dict[player].sonnenborn_berger += 1 * player_dict[opponents].points
+        for opponents in player_dict[player].tied_against:
+            player_dict[player].sonnenborn_berger += 0.5 * player_dict[opponents].points
+        for opponents in player_dict[player].lost_against:
+            player_dict[player].sonnenborn_berger += 0 * player_dict[opponents].points
+
+
+
+
+
+
 
 input_string = """Anna
     Bob
@@ -133,5 +145,5 @@ player_dict = creating_dictionary(players)
 
 main_points(rounds)
 resistance_points()
-
+sonnenborn_points()
 pprint(sorted(player_dict.values()))
