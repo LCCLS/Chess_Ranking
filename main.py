@@ -17,7 +17,39 @@ class player_result:
                self.sonnenborn_berger == other.sonnenborn_berger and self.black == other.black
 
 
-string = """Anna
+class PlayerStatus:
+    def __init__(self, name):
+        self.name = name
+        self.points = 0
+        self.resistance_points = 0
+        self.sonnenborn_berger = 0
+        self.black = 0
+        self.won_against = set()
+        self.lost_against = set()
+        self.tied_against = set()
+
+    def __repr__(self):
+        return (f'name={self.name}, '
+                f'points={self.points}, '
+                f'resistance={self.resistance_points}, '
+                f'sonnenborn={self.sonnenborn_berger}, '
+                f'black={self.black}, '
+                f'won_against={self.won_against}, '
+                f'lost_against={self.lost_against}, '
+                f'tied_against={self.tied_against}, '
+                f'opponents={self.opponents}')
+
+    def __lt__(self, other):
+        return (self.points > other.points or
+                self.resistance_points > other.resistance_points or
+                self.sonnenborn_berger > other.sonnenborn_berger or
+                self.black > other.black)
+
+    @property
+    def opponents(self):
+        return self.lost_against.union(self.won_against).union(self.tied_against)
+
+input_string = """Anna
     Bob
     Charlotte
     Daniel
@@ -37,78 +69,70 @@ string = """Anna
     Bob Femke 1 0"""
 
 
-def splitting_input(some_string):
+def splitting_input(input_: str):
     """splitting the input string on every empty tab"""
-    n = 0
-    list = []
-    new_list = []
-    a_str = some_string.split('\n\n')
-    for _ in a_str:
-        new_list = a_str[n].split('\n')
-        list.append(new_list)
-        n += 1
+    data = [e.strip() for e in input_.split('\n\n')]
+    names = data[0].split()
+    rounds = []
+    data = data[1:]
+    data = [e.split('\n') for e in data]
 
-    names = [score.split() for score in list[0]]
-    first_round = [score.split() for score in list[1]]
-    second_round = [score.split() for score in list[2]]
-    final_round = [score.split() for score in list[3]]
-    player_inputs = [names, first_round, second_round, final_round]
-
-    return player_inputs
+    for round_ in data:
+        rounds.append([match.split() for match in round_])
+    return names, rounds
 
 
-name = splitting_input(string)
-round0 = name[0]
-round1 = name[1]
-round2 = name[2]
-round3 = name[3]
-played_rounds = round1, round2, round3
-new_player_input = name[0][0] + name[0][1] + name[0][2] + name[0][3] + name[0][4] + name[0][5]
-n = 0
-
-
-def creating_dictionary(some_list):
+def creating_dictionary(player_list):
     """creating a dictionary of player names from a parsed list"""
-    values = {'points': 0, 'resistance_points': 0, 'sonnenborn_berger': 0, 'black': 0}
-    dictionary = {ver: {col: 0 for col in values} for ver in some_list}
-    return dictionary
+    ret = {player_name: PlayerStatus(player_name) for player_name in player_list}
+    return ret
 
 
-player_dict = creating_dictionary(new_player_input)
+def main_points(rounds):
+    for round_ in rounds:
+        for match in round_:
+            white = match[0]
+            black = match[1]
+            white_points = match[2]
+            black_points = match[3]
+
+            player_dict[white].points += float(white_points)
+            player_dict[black].points += float(black_points)
+            player_dict[black].black += 1
+
+            if white_points > black_points:
+                player_dict[white].won_against.add(black)
+                player_dict[black].lost_against.add(white)
+            elif white_points < black_points:
+                player_dict[black].won_against.add(white)
+                player_dict[white].lost_against.add(black)
+            elif white_points == black_points:
+                player_dict[white].tied_against.add(black)
+                player_dict[black].tied_against.add(white)
+            else:
+                raise ValueError("Should not happen :O")
 
 
-def main_points(input):
-    list0 = []
-    for rounds in input:
-        Player1 = rounds[0]
-        Player2 = rounds[1]
-        player_dict[Player1]['points'] = player_dict[Player1]['points'] + float(rounds[2])
-        player_dict[Player2]['points'] = player_dict[Player2]['points'] + float(rounds[3])
+def resistance_points():
+    for player in players:
+        for opponent in player_dict[player].opponents:
+            player_dict[player].resistance_points += player_dict[opponent].points
 
-    return player_dict
-
-
-def resistance_points(input):
-    name_list = []
-    list0 = []
-    for name in new_player_input:
-        print(name)
-        for rounds in input:
-            for round in rounds:
-
-                Player1 = round[0]
-                Player2 = round[1]
-                if Player1 == name:
-                    list0.append(Player2)
-                elif Player2 == name:
-                    list0.append(Player1)
+        # player_dict[player]['resistance_points'] = sum(
+        #     [player_dict[opponent]['points'] for opponent in player_dict[player]['opponents']]
+        # )
 
 
+def sonnenborn_points():
+    pass
 
+players, rounds = splitting_input(input_string)
+player_dict = creating_dictionary(players)
 
+main_points(rounds)
+resistance_points()
 
+print(player_dict)
 
-    return list0
-
-
-print(resistance_points(played_rounds))
+from pprint import pprint
+pprint(sorted(player_dict.values()))
