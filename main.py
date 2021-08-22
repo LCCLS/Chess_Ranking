@@ -1,3 +1,5 @@
+from pprint import pprint
+
 class player_result:
     def __init__(self, name: str, points: float, resistance_points: float, sonnenborn_berger: float, black: int):
         self.name = name
@@ -48,25 +50,6 @@ class PlayerStatus:
     @property
     def opponents(self):
         return self.lost_against.union(self.won_against).union(self.tied_against)
-
-input_string = """Anna
-    Bob
-    Charlotte
-    Daniel
-    Erik
-    Femke
-
-    Anna Femke 1 0
-    Bob Erik 0 1
-    Charlotte Daniel 0.5 0.5
-
-    Erik Anna 1 0
-    Femke Charlotte 0.5 0.5
-    Daniel Bob 1 0
-
-    Daniel Erik 0.5 0.5
-    Charlotte Anna 1 0
-    Bob Femke 1 0"""
 
 
 def splitting_input(input_: str):
@@ -126,13 +109,29 @@ def resistance_points():
 def sonnenborn_points():
     pass
 
+input_string = """Anna
+    Bob
+    Charlotte
+    Daniel
+    Erik
+    Femke
+
+    Anna Femke 1 0
+    Bob Erik 0 1
+    Charlotte Daniel 0.5 0.5
+
+    Erik Anna 1 0
+    Femke Charlotte 0.5 0.5
+    Daniel Bob 1 0
+
+    Daniel Erik 0.5 0.5
+    Charlotte Anna 1 0
+    Bob Femke 1 0"""
+
 players, rounds = splitting_input(input_string)
 player_dict = creating_dictionary(players)
 
 main_points(rounds)
 resistance_points()
 
-print(player_dict)
-
-from pprint import pprint
 pprint(sorted(player_dict.values()))
