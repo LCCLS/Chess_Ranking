@@ -36,8 +36,6 @@ string = """Anna
     Charlotte Anna 1 0
     Bob Femke 1 0"""
 
-player_input = []
-
 
 def splitting_input(some_string):
     """splitting the input string on every empty tab"""
@@ -54,49 +52,63 @@ def splitting_input(some_string):
     first_round = [score.split() for score in list[1]]
     second_round = [score.split() for score in list[2]]
     final_round = [score.split() for score in list[3]]
-    global player_input
-    player_input = [names, first_round, second_round, final_round]
+    player_inputs = [names, first_round, second_round, final_round]
 
-    return player_input
+    return player_inputs
 
 
-splitting_input(string)
-
-new_player_input0 = player_input[0][0] + player_input[0][1] + player_input[0][2] + player_input[0][3] + player_input[0][
-    4] + \
-                    player_input[0][5]
-
-a_dict = {}
+name = splitting_input(string)
+round0 = name[0]
+round1 = name[1]
+round2 = name[2]
+round3 = name[3]
+played_rounds = round1, round2, round3
+new_player_input = name[0][0] + name[0][1] + name[0][2] + name[0][3] + name[0][4] + name[0][5]
+n = 0
 
 
 def creating_dictionary(some_list):
     """creating a dictionary of player names from a parsed list"""
-    global a_dict
-    i = 0
-
-    for item in some_list:
-        a_dict = dict.fromkeys(some_list, {'name', 'points', 'resistance_points', 'Sonnenborn_berger', 'black'})
-        i += 1
-    return a_dict
+    values = {'points': 0, 'resistance_points': 0, 'sonnenborn_berger': 0, 'black': 0}
+    dictionary = {ver: {col: 0 for col in values} for ver in some_list}
+    return dictionary
 
 
-# connecting the dictionary to a class
-# class Players:
-# def __init__(self, a_dict):
-#  for key, value in a_dict.items():
-#  setattr(self, key, value)
+player_dict = creating_dictionary(new_player_input)
 
 
-# o = player_result('Anna', 1.0, 5.0, 0.50, 2)
+def main_points(input):
+    list0 = []
+    for rounds in input:
+        Player1 = rounds[0]
+        Player2 = rounds[1]
+        player_dict[Player1]['points'] = player_dict[Player1]['points'] + float(rounds[2])
+        player_dict[Player2]['points'] = player_dict[Player2]['points'] + float(rounds[3])
+
+    return player_dict
 
 
-def eval_input(list):
-    n = 0
-    for players in list:
-        creating_dictionary(new_player_input0)
-        n += 1
-    return a_dict
+def resistance_points(input):
+    name_list = []
+    list0 = []
+    for name in new_player_input:
+        print(name)
+        for rounds in input:
+            for round in rounds:
+
+                Player1 = round[0]
+                Player2 = round[1]
+                if Player1 == name:
+                    list0.append(Player2)
+                elif Player2 == name:
+                    list0.append(Player1)
 
 
-print(eval_input(player_input[0]))
-creating_dictionary(new_player_input0)
+
+
+
+
+    return list0
+
+
+print(resistance_points(played_rounds))
