@@ -1,5 +1,6 @@
 from pprint import pprint
 
+
 class player_result:
     def __init__(self, name: str, points: float, resistance_points: float, sonnenborn_berger: float, black: int):
         self.name = name
@@ -42,10 +43,14 @@ class PlayerStatus:
                 f'opponents={self.opponents}')
 
     def __lt__(self, other):
-        return (self.points > other.points or
-                self.resistance_points > other.resistance_points or
-                self.sonnenborn_berger > other.sonnenborn_berger or
-                self.black > other.black)
+        if self.points > other.points:
+            return self.points > other.points
+        elif self.points == other.points:
+            return self.resistance_points > other.resistance_points
+        elif self.resistance_points == other.resistance_points:
+            return self.sonnenborn_berger > other.sonnenborn_berger
+        elif self.sonnenborn_berger == other.sonnenborn_berger:
+            return self.black > other.black
 
     @property
     def opponents(self):
@@ -71,24 +76,13 @@ def creating_dictionary(player_list):
     return ret
 
 
-def main_points(rounds):
+def parse_data(rounds):
     for round_ in rounds:
         for match in round_:
             white = match[0]
             black = match[1]
             white_points = match[2]
             black_points = match[3]
-
-            # Mich nervt es noch, dass man hier so viel mehr macht als nur die points zu
-            # berechnen. Wenn du willst, kannst du mal versuchen hier wirklich nur die
-            # Daten zu gathern und die funktion sowas wie parse_data nennen. Dann
-            # können wir die main_points auch aus den won_against und tied_against
-            # berechnen:
-            # points = len(player_dict[player].won_against) + 0.5 * len(player_dict[player].tied_against)
-            # player_dict[player].points = points
-            # Das sollte doch laufen, oder?
-            player_dict[white].points += float(white_points)
-            player_dict[black].points += float(black_points)
             player_dict[black].black += 1
 
             if white_points > black_points:
@@ -102,6 +96,12 @@ def main_points(rounds):
                 player_dict[black].tied_against.add(white)
             else:
                 raise ValueError("Should not happen :O")
+
+
+def points():
+    for player in players:
+        points = len(player_dict[player].won_against) + 0.5 * len(player_dict[player].tied_against)
+        player_dict[player].points = points
 
 
 def resistance_points():
@@ -133,7 +133,9 @@ if __name__ == '__main__':
     players, rounds = splitting_input(input_string)
     player_dict = creating_dictionary(players)
 
-    main_points(rounds)
-    resistance_points()
-    sonnenborn_points()
-    pprint(sorted(player_dict.values()))
+
+parse_data(rounds)
+points()
+resistance_points()
+sonnenborn_points()
+pprint(sorted(player_dict.values()))
