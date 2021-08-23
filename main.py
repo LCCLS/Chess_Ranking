@@ -79,6 +79,14 @@ def main_points(rounds):
             white_points = match[2]
             black_points = match[3]
 
+            # Mich nervt es noch, dass man hier so viel mehr macht als nur die points zu
+            # berechnen. Wenn du willst, kannst du mal versuchen hier wirklich nur die
+            # Daten zu gathern und die funktion sowas wie parse_data nennen. Dann
+            # können wir die main_points auch aus den won_against und tied_against
+            # berechnen:
+            # points = len(player_dict[player].won_against) + 0.5 * len(player_dict[player].tied_against)
+            # player_dict[player].points = points
+            # Das sollte doch laufen, oder?
             player_dict[white].points += float(white_points)
             player_dict[black].points += float(black_points)
             player_dict[black].black += 1
@@ -112,38 +120,20 @@ def sonnenborn_points():
             player_dict[player].sonnenborn_berger += 1 * player_dict[opponents].points
         for opponents in player_dict[player].tied_against:
             player_dict[player].sonnenborn_berger += 0.5 * player_dict[opponents].points
+
+        # Den kannst du dir auch schenken :D
         for opponents in player_dict[player].lost_against:
             player_dict[player].sonnenborn_berger += 0 * player_dict[opponents].points
 
 
+if __name__ == '__main__':
+    with open('input_text.txt') as f:
+        input_string = f.read()
 
+    players, rounds = splitting_input(input_string)
+    player_dict = creating_dictionary(players)
 
-
-
-
-input_string = """Anna
-    Bob
-    Charlotte
-    Daniel
-    Erik
-    Femke
-
-    Anna Femke 1 0
-    Bob Erik 0 1
-    Charlotte Daniel 0.5 0.5
-
-    Erik Anna 1 0
-    Femke Charlotte 0.5 0.5
-    Daniel Bob 1 0
-
-    Daniel Erik 0.5 0.5
-    Charlotte Anna 1 0
-    Bob Femke 1 0"""
-
-players, rounds = splitting_input(input_string)
-player_dict = creating_dictionary(players)
-
-main_points(rounds)
-resistance_points()
-sonnenborn_points()
-pprint(sorted(player_dict.values()))
+    main_points(rounds)
+    resistance_points()
+    sonnenborn_points()
+    pprint(sorted(player_dict.values()))
