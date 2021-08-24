@@ -1,4 +1,24 @@
+from typing import Dict, List
 from pprint import pprint
+
+# DON'T MODIFY THIS CLASS
+class player_result:
+    def __init__(self, name: str, points: float, resistance_points: float, sonnenborn_berger: float, black: int):
+        self.name = name
+        self.points = points
+        self.resistance_points = resistance_points
+        self.sonnenborn_berger = sonnenborn_berger
+        self.black = black
+
+    def __repr__(self):
+        return 'player_result(name=\'' + self.name + '\', points=' + str(self.points) + ', resistance_points=' + \
+               str(self.resistance_points) + ', sonnenborn_berger=' + str(self.sonnenborn_berger) + \
+               ', black=' + str(self.black) + ')'
+
+    def __eq__(self, other):
+        return self.name == other.name and self.points == other.points and \
+               self.resistance_points == other.resistance_points and \
+               self.sonnenborn_berger == other.sonnenborn_berger and self.black == other.black
 
 
 class PlayerStatus:
@@ -25,7 +45,7 @@ class PlayerStatus:
 
     def __lt__(self, other):
         if self.points > other.points:
-            return self.points > other.points
+            return True
         elif self.points == other.points:
             return self.resistance_points > other.resistance_points
         elif self.resistance_points == other.resistance_points:
@@ -33,13 +53,32 @@ class PlayerStatus:
         elif self.sonnenborn_berger == other.sonnenborn_berger:
             return self.black > other.black
 
+    def __gt__(self, other):
+        if self.points < other.points:
+            return False
+        elif self.points == other.points:
+            return self.resistance_points < other.resistance_points
+        elif self.resistance_points == other.resistance_points:
+            return self.sonnenborn_berger < other.sonnenborn_berger
+        elif self.sonnenborn_berger == other.sonnenborn_berger:
+            return self.black < other.black
+
+    def __eq__(self, other):
+        return self.points == other.points and self.resistance_points == other.resistance_points and self.sonnenborn_berger == other.sonnenborn_berger and self.black == other.black
+
     @property
     def opponents(self):
         return self.lost_against.union(self.won_against).union(self.tied_against)
 
 
+def sorting_func(player_1: PlayerStatus, player_2: PlayerStatus):
+    if player_1.points > player_2.points:
+        pass
+
+
+
 def splitting_input(input_: str):
-    """splitting the input string on every empty tab"""
+    """Split the input string on every double new line"""
     data = [e.strip() for e in input_.split('\n\n')]
     names = data[0].split()
     rounds = []
@@ -57,7 +96,7 @@ def creating_dictionary(player_list):
     return ret
 
 
-def parse_data(rounds):
+def parse_data(player_dict, rounds):
     for round_ in rounds:
         for match in round_:
             white = match[0]
@@ -77,46 +116,65 @@ def parse_data(rounds):
                 player_dict[black].tied_against.add(white)
             else:
                 raise ValueError("Should not happen :O")
+    return player_dict
 
 
-def points():
+def points(player_dict, players):
     for player in players:
-        points = len(player_dict[player].won_against) + 0.5 * len(player_dict[player].tied_against)
-        player_dict[player].points = points
+        player_points = (
+                len(player_dict[player].won_against) +
+                0.5 * len(player_dict[player].tied_against)
+        )
+        player_dict[player].points = player_points
+    return player_dict
 
 
-def resistance_points():
+def resistance_points(player_dict, players):
     for player in players:
         for opponent in player_dict[player].opponents:
             player_dict[player].resistance_points += player_dict[opponent].points
-
-        # player_dict[player]['resistance_points'] = sum(
-        #     [player_dict[opponent]['points'] for opponent in player_dict[player]['opponents']]
-        # )
+    return player_dict
 
 
-def sonnenborn_points():
+def sonnenborn_points(
+        player_dict: Dict[str, PlayerStatus],
+        players: List[str]
+) -> Dict[str, PlayerStatus]:
+    """Calculate Sonnenborn Points."""
     for player in players:
         for opponents in player_dict[player].won_against:
             player_dict[player].sonnenborn_berger += 1 * player_dict[opponents].points
         for opponents in player_dict[player].tied_against:
             player_dict[player].sonnenborn_berger += 0.5 * player_dict[opponents].points
+    return player_dict
 
-        # Den kannst du dir auch schenken :D
-        for opponents in player_dict[player].lost_against:
-            player_dict[player].sonnenborn_berger += 0 * player_dict[opponents].points
+
+def determine_output(input_string: str):
+    players, rounds = splitting_input(input_string)
+    data = creating_dictionary(players)
+
+    data = parse_data(player_dict=data, rounds=rounds)
+    data = points(player_dict=data, players=players)
+    data = resistance_points(player_dict=data, players=players)
+    data = sonnenborn_points(player_dict=data, players=players)
+
+    result = []
+    for player in sorted(data.values()):
+        result.append(
+            player_result(
+                name=player.name,
+                points=player.points,
+                resistance_points=player.resistance_points,
+                sonnenborn_berger=player.sonnenborn_berger,
+                black=player.black,
+            )
+        )
+
+    return result
 
 
 if __name__ == '__main__':
     with open('input_text.txt') as f:
         input_string = f.read()
 
-    players, rounds = splitting_input(input_string)
-    player_dict = creating_dictionary(players)
-
-    parse_data(rounds)
-    points()
-    resistance_points()
-    sonnenborn_points()
-    pprint(sorted(player_dict.values()))
-
+    determine_output(input_string)
