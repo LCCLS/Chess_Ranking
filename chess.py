@@ -43,38 +43,9 @@ class PlayerStatus:
                 f'tied_against={self.tied_against}, '
                 f'opponents={self.opponents}')
 
-    def __lt__(self, other):
-        if self.points > other.points:
-            return True
-        elif self.points == other.points:
-            return self.resistance_points > other.resistance_points
-        elif self.resistance_points == other.resistance_points:
-            return self.sonnenborn_berger > other.sonnenborn_berger
-        elif self.sonnenborn_berger == other.sonnenborn_berger:
-            return self.black > other.black
-
-    def __gt__(self, other):
-        if self.points < other.points:
-            return False
-        elif self.points == other.points:
-            return self.resistance_points < other.resistance_points
-        elif self.resistance_points == other.resistance_points:
-            return self.sonnenborn_berger < other.sonnenborn_berger
-        elif self.sonnenborn_berger == other.sonnenborn_berger:
-            return self.black < other.black
-
-    def __eq__(self, other):
-        return self.points == other.points and self.resistance_points == other.resistance_points and self.sonnenborn_berger == other.sonnenborn_berger and self.black == other.black
-
     @property
     def opponents(self):
         return self.lost_against.union(self.won_against).union(self.tied_against)
-
-
-def sorting_func(player_1: PlayerStatus, player_2: PlayerStatus):
-    if player_1.points > player_2.points:
-        pass
-
 
 
 def splitting_input(input_: str):
@@ -158,8 +129,28 @@ def determine_output(input_string: str):
     data = resistance_points(player_dict=data, players=players)
     data = sonnenborn_points(player_dict=data, players=players)
 
+    # So klappt es verlässlich. Wir übergeben der built-in sorted function einfach die
+    # data.values() und sagen über das keyword-argument `key=` wie wir die Elemente in
+    # der Liste sortiert haben wollen. `reversed=True` brauchen wir, weil Python
+    # standardmäßig aufsteigend sortiert -- wir wollen aber tendenziell das größte (i.e.
+    # höchste Punktzahlen) zuerst.
+    #
+    # Was genau lambda ist kannst du nachlesen (das sprengt etwas den Rahmen) aber im
+    # Endeffekt sagen wir "Erstelle folgendes Tuple von jedem Element x:
+    # (x.points, x.resistance_points, x.sonnenborn_berger, x.black)
+    # Jetzt benutze diese Tuples um die Liste zu sortieren"
+    #
+    # Das klappt, weil Python Tuples schon genau so sortiert, wie man es intuitiv haben
+    # will --> Erst anhand des ersten Elements, wenn die gleich sind anhand des zweiten,
+    # usw. Tada, sortiert und Tests passen :)
+    sorted_data = sorted(
+            data.values(),
+            key=lambda x: (x.points, x.resistance_points, x.sonnenborn_berger, x.black),
+            reverse=True
+    )
+
     result = []
-    for player in sorted(data.values()):
+    for player in sorted_data:
         result.append(
             player_result(
                 name=player.name,
