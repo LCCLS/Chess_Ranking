@@ -1,25 +1,6 @@
 from pprint import pprint
 
 
-class player_result:
-    def __init__(self, name: str, points: float, resistance_points: float, sonnenborn_berger: float, black: int):
-        self.name = name
-        self.points = points
-        self.resistance_points = resistance_points
-        self.sonnenborn_berger = sonnenborn_berger
-        self.black = black
-
-    def __str__(self):
-        return 'player_result(name=\'' + self.name + '\', points=' + str(self.points) + ', resistance_points=' + \
-               str(self.resistance_points) + ', sonnenborn_berger=' + str(self.sonnenborn_berger) + \
-               ', black=' + str(self.black) + ')'
-
-    def __eq__(self, other):
-        return self.name == other.name and self.points == other.points and \
-               self.resistance_points == other.resistance_points and \
-               self.sonnenborn_berger == other.sonnenborn_berger and self.black == other.black
-
-
 class PlayerStatus:
     def __init__(self, name):
         self.name = name
@@ -133,9 +114,9 @@ if __name__ == '__main__':
     players, rounds = splitting_input(input_string)
     player_dict = creating_dictionary(players)
 
+    parse_data(rounds)
+    points()
+    resistance_points()
+    sonnenborn_points()
+    pprint(sorted(player_dict.values()))
 
-parse_data(rounds)
-points()
-resistance_points()
-sonnenborn_points()
-pprint(sorted(player_dict.values()))
