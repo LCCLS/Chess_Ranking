@@ -121,10 +121,6 @@ def sonnenborn_points():
         for opponents in player_dict[player].tied_against:
             player_dict[player].sonnenborn_berger += 0.5 * player_dict[opponents].points
 
-        # Den kannst du dir auch schenken :D
-        for opponents in player_dict[player].lost_against:
-            player_dict[player].sonnenborn_berger += 0 * player_dict[opponents].points
-
 
 if __name__ == '__main__':
     with open('input_text.txt') as f:
@@ -132,7 +128,6 @@ if __name__ == '__main__':
 
     players, rounds = splitting_input(input_string)
     player_dict = creating_dictionary(players)
-
 
 parse_data(rounds)
 points()
